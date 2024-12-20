@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="container">
+                <h1> Hotel Management</h1>
+                <ul id="navLinks">
+                    <li><a href="#login">Login</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Login Section -->
+        <section id="login" class="dashboard">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+
+                <button type="submit">Login</button>
+            </form>
+        </section>
+
+        <!-- Dashboard Container -->
+        <div id="dashboardContainer" style="display: none;">
+            <nav class="dashboard-nav">
+                <ul>
+                    <li><a href="#guestManagement" class="nav-link">Guest Management</a></li>
+                    <li><a href="#roomManagement" class="nav-link">Room Management</a></li>
+                    <li><a href="#reservationManagement" class="nav-link">Reservation Management</a></li>
+                    <li><a href="#logout" id="logoutButton">Logout</a></li>
+                </ul>
+            </nav>
+
+            <!-- Guest Management Dashboard -->
+            <section id="guestManagement" class="dashboard">
+                <h2>Guest Management</h2>
+                <form id="guestForm">
+                    <label for="guestName">Name:</label>
+                    <input type="text" id="guestName" name="guestName" required>
+
+                    <label for="guestPhone">Phone Number:</label>
+                    <input type="text" id="guestPhone" name="guestPhone" required>
+
+                    <label for="guestEmail">Email:</label>
+                    <input type="email" id="guestEmail" name="guestEmail">
+
+                    <label for="guestAddress">Address:</label>
+                    <input type="text" id="guestAddress" name="guestAddress">
+
+                    <button type="submit">Add Guest</button>
+                </form>
+                <div id="guestList"></div>
+            </section>
+
+            <!-- Room Management Dashboard -->
+            <section id="roomManagement" class="dashboard">
+                <h2>Room Management</h2>
+                <form id="roomForm">
+                    <label for="roomType">Room Type:</label>
+                    <select id="roomType" name="roomType" required>
+                        <option value="Single">Single</option>
+                        <option value="Double">Double</option>
+                    </select>
+
+                    <label for="roomNum">Room Number:</label>
+                    <input type="number" id="roomNum" name="roomNum" required>
+
+                    <label for="roomStatus">Room Status:</label>
+                    <select id="roomStatus" name="roomStatus">
+                        <option value="available">Available</option>
+                        <option value="occupied">Occupied</option>
+                    </select>
+
+                    <button type="button" id="addRoomBtn">Add Room</button>
+                </form>
+                <div id="roomList"></div>
+            </section>
+
+            <!-- Reservation Management Dashboard -->
+            <section id="reservationManagement" class="dashboard">
+                <h2>Reservation Management</h2>
+                <form id="reservationForm">
+                    <label for="guestId">Guest ID:</label>
+                    <input type="number" id="guestId" name="guestId" required>
+
+                    <label for="roomId">Room ID:</label>
+                    <input type="number" id="roomId" name="roomId" required>
+
+                    <label for="checkInDate">Check-in Date:</label>
+                    <input type="date" id="checkInDate" name="checkInDate" required>
+
+                    <label for="checkOutDate">Check-out Date:</label>
+                    <input type="date" id="checkOutDate" name="checkOutDate" required>
+
+                    <button type="submit">Book Reservation</button>
+                </form>
+                <div id="reservationList"></div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const dashboardContainer = document.getElementById('dashboardContainer');
+        const navLinks = document.getElementById('navLinks');
+        const guestForm = document.getElementById('guestForm');
+        const roomForm = document.getElementById('roomForm');
+        const reservationForm = document.getElementById('reservationForm');
+        const validCredentials = [
+            { username: 'admin', password: 'password123' },
+            { username: 'zafaa_28', password: 'safa@2805' },
+            { username: 'deebika', password: '100406' }
+            
+        ];
+
+        // Handle login form submission
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const isValidUser = validCredentials.some(cred =>
+                cred.username === username && cred.password === password
+            );
+
+            if (isValidUser) {
+                dashboardContainer.style.display = 'block'; // Show the dashboard after successful login
+                document.getElementById('login').style.display = 'none'; // Hide login section
+                navLinks.style.display = 'none'; // Hide login link
+                showDashboardSection('guestManagement'); // Show the Guest Management section by default
+            } else {
+                alert('Invalid username or password. Please try again.');
+            }
+        });
+
+        // Logout functionality
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            dashboardContainer.style.display = 'none'; // Hide dashboard
+            document.getElementById('login').style.display = 'block'; // Show login section
+            navLinks.style.display = 'block'; // Show login link again
+        });
+
+        // Handle section navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                showDashboardSection(this.getAttribute('href').substring(1)); // Show corresponding section
+            });
+        });
+
+        function showDashboardSection(sectionId) {
+            document.querySelectorAll('.dashboard').forEach(section => {
+                section.style.display = 'none'; // Hide all sections
+            });
+            document.getElementById(sectionId).style.display = 'block'; // Show selected section
+        }
+
+        // Handle Guest Form submission
+        guestForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const guestName = document.getElementById('guestName').value;
+            const guestPhone = document.getElementById('guestPhone').value;
+            const guestEmail = document.getElementById('guestEmail').value;
+            const guestAddress = document.getElementById('guestAddress').value;
+
+            const guestList = document.getElementById('guestList');
+            guestList.innerHTML += `<p>Name: ${guestName}, Phone: ${guestPhone}, Email: ${guestEmail}, Address: ${guestAddress}</p>`;
+
+            guestForm.reset(); // Reset form fields
+        });
+
+        // Handle Room Form submission
+        document.getElementById("addRoomBtn").addEventListener("click", function() {
+            const roomType = document.getElementById("roomType").value;
+            const roomNum = document.getElementById("roomNum").value;
+            const roomStatus = document.getElementById("roomStatus").value;
+
+            // Check if all required fields are filled
+            if (roomType && roomNum && roomStatus) {
+                const roomList = document.getElementById('roomList');
+                roomList.innerHTML += `<p>Room Type: ${roomType}, Room Number: ${roomNum}, Status: ${roomStatus}</p>`;
+                document.getElementById("roomForm").reset(); // Reset the form after adding the room
+            } else {
+                alert("Please fill in all room details.");
+            }
+        });
+
+        // Handle Reservation Form submission
+        reservationForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const guestId = document.getElementById('guestId').value;
+            const roomId = document.getElementById('roomId').value;
+            const checkInDate = document.getElementById('checkInDate').value;
+            const checkOutDate = document.getElementById('checkOutDate').value;
+
+            const reservationList = document.getElementById('reservationList');
+            reservationList.innerHTML += `<p>Guest ID: ${guestId}, Room ID: ${roomId}, Check-in: ${checkInDate}, Check-out: ${checkOutDate}</p>`;
+
+            reservationForm.reset(); 
+        });
+    </script>
+</body>
+</html>
